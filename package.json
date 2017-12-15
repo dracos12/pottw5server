@@ -1,6 +1,6 @@
 {
   "name": "pottw5 Server",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "private": true,
   "dependencies": {},
   "scripts": {
