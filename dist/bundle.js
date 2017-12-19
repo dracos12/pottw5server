@@ -6213,30 +6213,40 @@ var popCoinStore = /** @class */function (_super) {
                 singleton_1.default.popupManager.displayPopup(msg);
                 return;
             }
-            var amount;
-            var inc = 1;
-            if (id == 1) amount = 10; // 10 gold
-            if (id == 2) amount = 30; // 30 gold
+            _this.coinInc = 1;
+            if (id == 1) _this.purchaseAmount = 10; // 10 gold
+            if (id == 2) _this.purchaseAmount = 30; // 30 gold
             if (id == 3) {
-                amount = 7; // 70 gold in increments of 10
-                inc = 10;
+                _this.purchaseAmount = 7; // 70 gold in increments of 10
+                _this.coinInc = 10;
             }
             if (id == 4) {
-                amount = 30; // 300 gold in increments of 10
-                inc = 10;
+                _this.purchaseAmount = 30; // 300 gold in increments of 10
+                _this.coinInc = 10;
             }
             if (id == 5) {
-                amount = 6;
-                inc = 100;
+                _this.purchaseAmount = 6;
+                _this.coinInc = 100;
             }
             if (id == 6) {
-                amount = 15;
-                inc = 100;
+                _this.purchaseAmount = 15;
+                _this.coinInc = 100;
             }
+            FB.ui({
+                method: 'pay',
+                action: 'purchaseiap',
+                product_id: 'payments_lite_01',
+                developer_payload: 'this_is_a_test_payload'
+            }, _this.fbIAPResponse // Callback function
+            );
+        };
+        _this.fbIAPResponse = function (response) {
+            console.log("FB.ui pay response: ");
+            console.log(response);
             // and send up the request to the hud to award the coins
             var pos = _this.toGlobal(_this.btnBuy.position);
             var myEvent = new CustomEvent("buyGold", {
-                'detail': { "amount": amount, "inc": inc, "x": pos.x + _this.btnBuy.width / 2, "y": pos.y + _this.btnBuy.height / 2 }
+                'detail': { "amount": _this.purchaseAmount, "inc": _this.coinInc, "x": pos.x + _this.btnBuy.width / 2, "y": pos.y + _this.btnBuy.height / 2 }
             });
             window.dispatchEvent(myEvent);
         };
