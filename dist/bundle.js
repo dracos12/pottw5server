@@ -183,7 +183,7 @@ var SingletonClass = /** @class */function () {
             rateSort.push({ itemid: k, rate: marketData[k].rate });
         }
         rateSort.sort(this.rateComp);
-        console.log(rateSort);
+        //console.log(rateSort);
         // generate the data and store it on the singleton
         var i, j, rate, up;
         var data = {};
@@ -660,7 +660,7 @@ var theSea = /** @class */function () {
                     isle.setPolyData(json_data[key].polygonPts);
                     isle.setData(json_data[key]); // save out the entire entry for isle's later use
                     if (isle.isPort()) _this.numPorts++;
-                    console.log("Adding " + sprite.name + " to theSea");
+                    //console.log("Adding " + sprite.name + " to theSea");
                 }
             }
             _this.islandsLoaded = true;
@@ -769,7 +769,7 @@ var theSea = /** @class */function () {
         var desiredPort = theSea.getRandomIntInclusive(1, this.numPorts);
         var portCount = 0;
         var isle;
-        console.log("DesiredPort: " + desiredPort + " numPorts: " + this.numPorts);
+        //console.log("DesiredPort: " + desiredPort +  " numPorts: " + this.numPorts);
         // loop through the island array
         for (var _i = 0, _a = this.islandArray; _i < _a.length; _i++) {
             var gameObj = _a[_i];
@@ -3238,7 +3238,7 @@ var Ship = /** @class */function (_super) {
         }
         if (newHeading == null) {
             // couldnt find heading.. put up achtung
-            console.log("Could not find good heading, stopping!");
+            //console.log("Could not find good heading, stopping!");
             this.showAchtung();
             this.allStop();
             this.aiArrived = true;
@@ -3474,7 +3474,7 @@ var Ship = /** @class */function (_super) {
         } else {
             this.sailState = 2; // sails up
         }
-        console.log("setting Sail Trim: " + newTrim.toFixed(2) + " TargetSpeed: " + this.targetSpeed.toFixed(2));
+        //console.log("setting Sail Trim: " + newTrim.toFixed(2) + " TargetSpeed: " + this.targetSpeed.toFixed(2));
         // if (!this.aGround && !this.inIrons)
         //     TweenLite.to(this.tweenVars, 2.5, { speed:this.targetSpeed, ease: Power2.easeInOut });
     };
@@ -4359,7 +4359,7 @@ var Island = /** @class */function (_super) {
         this.islandData = data;
         if (this.islandData.hasOwnProperty("port") && this.islandData.port == true) {
             this._isPort = true;
-            console.log("Found port: " + this.islandData.portName);
+            //console.log("Found port: " + this.islandData.portName);
         }
         // set the pivot point from the data
         // this.sprite.pivot.x = this.islandData.refPt[0];
@@ -4941,6 +4941,11 @@ var MainHUD = /** @class */function () {
                 console.log("addToHold failed post-check");
             }
         };
+        this.fbStatusResponse = function (response) {
+            console.log("FB.getLoginStatus:");
+            console.log(response);
+            _this.doMe();
+        };
     }
     // request the assets we need loaded
     MainHUD.prototype.addLoaderAssets = function () {
@@ -5026,6 +5031,7 @@ var MainHUD = /** @class */function () {
         window.addEventListener("lootDone", this.lootDone, false);
         window.addEventListener("merchSell", this.merchSell, false);
         window.addEventListener("buyGold", this.buyGold, false);
+        this.testAPI(); // test the FB API
     };
     MainHUD.prototype.setPopupManager = function (popman) {
         this.popupManager = popman;
@@ -5079,6 +5085,16 @@ var MainHUD = /** @class */function () {
             }
         };
         xobj.send(null);
+    };
+    MainHUD.prototype.testAPI = function () {
+        console.log("FB.getLoginStatus:");
+        FB.getLoginStatus(this.fbStatusResponse);
+    };
+    MainHUD.prototype.doMe = function () {
+        console.log("FB.api(/me)");
+        FB.api('/me', function (response) {
+            console.log(response);
+        });
     };
     MainHUD.prototype.update = function () {
         var _this = this;
@@ -6419,7 +6435,6 @@ var popWarehouse = /** @class */function (_super) {
         };
         _this.wareClicked = function (e) {
             var eIcon = e.target;
-            console.log("wareClicked! eIcon: " + eIcon);
             var itemID = eIcon.getType();
             var price = singleton_1.default.getMarketItemPrice(itemID);
             if (singleton_1.default.player.getSilver() >= price) {
