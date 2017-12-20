@@ -3326,7 +3326,7 @@ var Ship = /** @class */function (_super) {
         // convert our polygonal data relative to our position
         this.convertPolyDataToCartesian();
         if (PolyK.ContainsPoint(this.cartPolyData8[this.polyNum], x, y)) {
-            console.log("ship HIT by point!");
+            //console.log("ship HIT by point!");
             return true;
         }
         return false;
@@ -3697,7 +3697,7 @@ var Ship = /** @class */function (_super) {
             rightBattery = true;
         }
         if (this.magBall > 0) {
-            console.log("FIRE!!");
+            //console.log("FIRE!!");
             this.magBall -= 1; // deduct ammo (for now just one shot)
             // velocity calculations
             var v = new Victor(0, 0);
@@ -3745,7 +3745,7 @@ var Ship = /** @class */function (_super) {
             // wreck frame does not conform.. move sprite by wreck offset.. for now hardcoded
             this.sprite.y += 30;
         }
-        console.log("took " + weight + " damage. Hull: " + this.statHull);
+        //console.log("took " + weight + " damage. Hull: " + this.statHull);
     };
     Ship.prototype.switchFrameToWrecked = function () {
         var s = this.getSprite();
@@ -4403,6 +4403,8 @@ var Player = /** @class */function () {
         this._lastReload = 0; // UTC timestamp of last reload time
         this._reloadTime = 30000; // player can reload every reloadTime milliseconds
         this._numReloads = 0; // number of times the user has reloaded
+        this.accessToken = ""; // FB access token to perform FB social calls with
+        this._FBUserID = ""; // FB user id to use to query data
     }
     Player.prototype.getGold = function () {
         return this.gold;
@@ -4449,6 +4451,26 @@ var Player = /** @class */function () {
     Player.prototype.incReloads = function () {
         this._numReloads++;
     };
+    Object.defineProperty(Player.prototype, "FBAccessToken", {
+        get: function () {
+            return this.accessToken;
+        },
+        set: function (token) {
+            this.accessToken = token;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Player.prototype, "FBUserID", {
+        get: function () {
+            return this._FBUserID;
+        },
+        set: function (userID) {
+            this._FBUserID = userID;
+        },
+        enumerable: true,
+        configurable: true
+    });
     return Player;
 }();
 exports.default = Player;
@@ -4642,7 +4664,7 @@ var FXManager = /** @class */function () {
         this.container.addChild(this.muzzlePlumeList[this.lastBall]);
         var ball = this.lastBall;
         this.muzzlePlumeList[this.lastBall].onComplete = function () {
-            _this.container.removeChild(_this.muzzlePlumeList[ball]);_this.muzzlePlumeList[ball].gotoAndStop(0);console.log("Removing muzzlePlume: " + ball);
+            _this.container.removeChild(_this.muzzlePlumeList[ball]);_this.muzzlePlumeList[ball].gotoAndStop(0); /*console.log("Removing muzzlePlume: " + ball );*/
         };
     };
     // get cannonball from pool, returns null if all in use (!)
@@ -4661,7 +4683,7 @@ var FXManager = /** @class */function () {
             if (!this.ballList[this.lastBall].inUse) {
                 this.ballList[this.lastBall].inUse = true;
                 found = true;
-                console.log("ballList: assigning ball: " + this.lastBall);
+                //console.log("ballList: assigning ball: " + this.lastBall);
             }
         }
         var numChildren = this.container.children.length;
@@ -4684,7 +4706,7 @@ var FXManager = /** @class */function () {
                 x = ball.x;
                 y = 8192 - ball.y; // convert to cartesian
                 if (PolyK.ContainsPoint(entry.getCartPolyData(), x, y)) {
-                    console.log("hit " + entry.getSprite().name + "!");
+                    //console.log("hit " + entry.getSprite().name + "!");
                     hitObj = entry;
                     break; // short circuit the loop
                 }
@@ -4738,11 +4760,10 @@ var FXManager = /** @class */function () {
                     this_1.splashList[i].play(); // start the animation
                     ball_1 = i;
                     this_1.splashList[i].onComplete = function () {
-                        _this.container.removeChild(_this.splashList[ball_1]);_this.splashList[ball_1].gotoAndStop(0);console.log("Removing splash: " + ball_1);
+                        _this.container.removeChild(_this.splashList[ball_1]);_this.splashList[ball_1].gotoAndStop(0); /*console.log("Removing splash: " + ball );*/
                     };
                     this_1.ballList[i].reset();
                     this_1.container.removeChild(this_1.ballList[i]);
-                    console.log("ball " + i + " spent... SPLASH");
                     return "continue";
                 }
                 // collide with islands and ships code here
@@ -4755,7 +4776,7 @@ var FXManager = /** @class */function () {
                     this_1.explosionList[i].play(); // start the animation
                     ball_1 = i;
                     this_1.explosionList[i].onComplete = function () {
-                        _this.container.removeChild(_this.explosionList[ball_1]);_this.explosionList[ball_1].gotoAndStop(0);console.log("Removing explosion: " + ball_1);
+                        _this.container.removeChild(_this.explosionList[ball_1]);_this.explosionList[ball_1].gotoAndStop(0); /*console.log("Removing explosion: " + ball );*/
                     };
                     this_1.ballList[i].reset(); // return ball to pool
                     this_1.container.removeChild(this_1.ballList[i]);
@@ -4942,9 +4963,16 @@ var MainHUD = /** @class */function () {
             }
         };
         this.fbStatusResponse = function (response) {
-            console.log("FB.getLoginStatus:");
+            console.log("response FB.getLoginStatus:");
             console.log(response);
-            _this.doMe();
+            if (response.status = "connected") {
+                // save access token and userid
+                singleton_1.default.player.FBUserID = response.userID;
+                singleton_1.default.player.FBAccessToken = response.accessToken;
+                _this.doMe();
+            } else {
+                console.log("Error in fbStatusRespone!");
+            }
         };
     }
     // request the assets we need loaded
@@ -5087,7 +5115,7 @@ var MainHUD = /** @class */function () {
         xobj.send(null);
     };
     MainHUD.prototype.testAPI = function () {
-        console.log("FB.getLoginStatus:");
+        console.log("call FB.getLoginStatus:");
         FB.getLoginStatus(this.fbStatusResponse);
     };
     MainHUD.prototype.doMe = function () {
@@ -6204,6 +6232,7 @@ var popCoinStore = /** @class */function (_super) {
         var _this = _super.call(this) || this;
         _this.cards = [];
         _this.clickID = -1;
+        _this.purchaseToken = "";
         _this.onBuy = function (e) {
             // start a purchase for the id number contained in the card
             var id = _this.clickID;
@@ -6243,12 +6272,29 @@ var popCoinStore = /** @class */function (_super) {
         _this.fbIAPResponse = function (response) {
             console.log("FB.ui pay response: ");
             console.log(response);
-            // and send up the request to the hud to award the coins
-            var pos = _this.toGlobal(_this.btnBuy.position);
-            var myEvent = new CustomEvent("buyGold", {
-                'detail': { "amount": _this.purchaseAmount, "inc": _this.coinInc, "x": pos.x + _this.btnBuy.width / 2, "y": pos.y + _this.btnBuy.height / 2 }
-            });
-            window.dispatchEvent(myEvent);
+            if (typeof response == 'undefined') {
+                console.log("fbIAPResponse is undefined");
+                return;
+            }
+            if (response.hasOwnProperty("error_message")) {
+                console.log("Error in FB.ui pay!");
+            } else {
+                _this.purchaseToken = response.purchase_token;
+                // call the FB api to consume the purchase
+                FB.api('/' + _this.purchaseToken + '/consume', // Replace the PURCHASE_TOKEN
+                'post', { access_token: singleton_1.default.player.FBAccessToken }, // Replace with a user access token
+                _this.fbConsumeResponse);
+                // and send up the request to the hud to award the coins
+                var pos = _this.toGlobal(_this.btnBuy.position);
+                var myEvent = new CustomEvent("buyGold", {
+                    'detail': { "amount": _this.purchaseAmount, "inc": _this.coinInc, "x": pos.x + _this.btnBuy.width / 2, "y": pos.y + _this.btnBuy.height / 2 }
+                });
+                window.dispatchEvent(myEvent);
+            }
+        };
+        _this.fbConsumeResponse = function (response) {
+            console.log("fbConsumeResponse: ");
+            console.log(response);
         };
         _this.coinCallBack = function (id) {
             // loop through cards and unhihlight cards not of this id
