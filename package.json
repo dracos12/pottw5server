@@ -1,9 +1,19 @@
 {
-  "name": "pottw5 Server",
-  "version": "0.0.3",
+  "name": "pottw5-Server",
+  "version": "0.0.4",
+  "description": "pottw5 Node/Express server",
+  "main": "app.js",
+  "author": "L. Dean Gibson II",
+  "license": "none",
   "private": true,
-  "dependencies": {},
   "scripts": {
     "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dracos12/pottw5server"
+  },
+  "dependencies": {
+    "express": "^4.16.3"
   }
 }
